@@ -59,6 +59,21 @@ http://127.0.0.1:8000/
 http://127.0.0.1:8000/health
 ```
 
+## 从零开始运行
+
+在一台新机器上，可以按下面步骤运行项目：
+
+```bash
+git clone <repo-url>
+cd ai_fullstack
+python -m venv .venv
+source .venv/Scripts/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+其中 `<repo-url>` 需要替换为实际的远程仓库地址。
+
 ## 今日完成内容
 
 - 创建项目目录结构。
@@ -69,3 +84,9 @@ http://127.0.0.1:8000/health
 - 创建 `app/main.py`。
 - 实现 `/` 和 `/health` 两个接口。
 - 配置 `.gitignore`，忽略 `.venv/` 和 Python 缓存文件。
+
+## 参考资料
+
+- [FastAPI First Steps](https://fastapi.tiangolo.com/tutorial/first-steps/)
+- [Python venv 官方文档](https://docs.python.org/3/library/venv.html)
+
