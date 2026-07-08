@@ -59,6 +59,22 @@ http://127.0.0.1:8000/
 http://127.0.0.1:8000/health
 ```
 
+## 导入原始文档
+
+把 `.md` 或 `.txt` 文件放入 `data/raw/`，然后在项目根目录运行：
+
+```bash
+python scripts/import_markdown.py
+```
+
+脚本会读取非空文件，并输出到：
+
+```text
+data/processed/documents.jsonl
+```
+
+每一行是一条 JSON 记录，包含 `id`、`source_path`、`title`、`text` 和 `metadata.file_type`。
+
 ## 从零开始运行
 
 在一台新机器上，可以按下面步骤运行项目：
