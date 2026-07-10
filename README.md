@@ -64,7 +64,7 @@ http://127.0.0.1:8000/health
 把 `.md` 或 `.txt` 文件放入 `data/raw/`，然后在项目根目录运行：
 
 ```bash
-python scripts/import_markdown.py
+.venv/Scripts/python.exe scripts/import_markdown.py --input data/raw --output data/processed/documents.jsonl
 ```
 
 脚本会读取非空文件，并输出到：
@@ -74,6 +74,14 @@ data/processed/documents.jsonl
 ```
 
 每一行是一条 JSON 记录，包含 `id`、`source_path`、`title`、`text` 和 `metadata.file_type`。
+
+输入目录不存在或输出文件无法写入时，命令会输出错误信息并以失败状态退出；非 UTF-8 文件会被跳过并提示；空目录会成功生成空的 JSONL 文件。
+
+运行测试：
+
+```bash
+.venv/Scripts/python.exe -m pytest
+```
 
 ## 从零开始运行
 
