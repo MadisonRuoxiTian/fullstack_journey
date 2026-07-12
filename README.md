@@ -1,55 +1,97 @@
-﻿# AI Fullstack
+# AI Fullstack
 
-## 项目目标
-
-待补充：未来 12 周的项目目标。
+一个用于整理 AI 学习数据、执行数据质量检查并提供 FastAPI 服务的最小工程。目前支持将 Markdown/TXT 原始资料导入 JSONL、检查处理后数据与 Golden Set，以及启动基础 Web API。
 
 ## 当前目录结构
 
 ```text
 ai_fullstack/
-├── app/
-│   └── main.py
+├── app/                  # FastAPI 应用
 ├── data/
-│   ├── raw/
-│   ├── processed/
-│   └── eval/
-├── notebooks/
-├── scripts/
-├── tests/
-├── docs/
+│   ├── raw/              # 原始 Markdown/TXT 资料
+│   ├── processed/        # 导入后的 JSONL 数据
+│   └── eval/             # Golden Set
+├── docs/                 # 项目文档
+├── notebooks/            # 探索性分析
+├── reports/              # 质量检查报告
+├── scripts/              # 数据导入与检查脚本
+├── tests/                # 自动化测试
 ├── requirements.txt
 ├── README.md
 └── .gitignore
 ```
 
-## 环境安装
+## 环境要求
 
-创建并使用虚拟环境：
+- Python 3.12
+- Git
+
+所有命令均在项目根目录运行。
+
+## 安装
+
+克隆项目并创建虚拟环境：
 
 ```bash
+git clone <repo-url>
+cd ai_fullstack
 python -m venv .venv
-source .venv/Scripts/activate
 ```
 
-安装依赖：
+其中 `<repo-url>` 需要替换为实际的远程仓库地址。
 
-```bash
-pip install -r requirements.txt
+Windows PowerShell：
+
+```powershell
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 ```
 
-如果不激活虚拟环境，也可以直接使用：
+macOS / Linux：
 
 ```bash
-.venv/Scripts/python.exe -m pip install -r requirements.txt
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
-## 启动方式
+`requirements.txt` 采用完整版本锁定，其中 FastAPI、Uvicorn 和 Pydantic 是运行依赖，pytest 是开发/测试依赖，其余为这些包的传递依赖。
 
-在项目根目录运行：
+## 导入原始数据
+
+将 UTF-8 编码的 `.md` 或 `.txt` 文件放入 `data/raw/`，然后运行：
 
 ```bash
-.venv/Scripts/python.exe -m uvicorn app.main:app --reload
+python scripts/import_markdown.py --input data/raw --output data/processed/documents.jsonl
+```
+
+输出文件 `data/processed/documents.jsonl` 每行是一条 JSON 记录，包含 `id`、`source_path`、`title`、`text` 和 `metadata.file_type`。输入目录不存在或输出文件无法写入时，命令会失败；非 UTF-8 文件会被跳过并提示；空目录会生成空 JSONL 文件。
+
+## 运行质量检查
+
+检查处理后的数据并更新 `reports/quality_report.md`：
+
+```bash
+python scripts/check_dataset.py
+```
+
+检查 Golden Set：
+
+```bash
+python scripts/check_golden.py data/eval/golden.jsonl
+```
+
+运行自动化测试：
+
+```bash
+python -m pytest tests --basetemp .pytest_tmp
+```
+
+## 启动 API
+
+启动开发服务器：
+
+```bash
+python -m uvicorn app.main:app --reload
 ```
 
 启动后访问：
@@ -58,59 +100,3 @@ pip install -r requirements.txt
 http://127.0.0.1:8000/
 http://127.0.0.1:8000/health
 ```
-
-## 导入原始文档
-
-把 `.md` 或 `.txt` 文件放入 `data/raw/`，然后在项目根目录运行：
-
-```bash
-.venv/Scripts/python.exe scripts/import_markdown.py --input data/raw --output data/processed/documents.jsonl
-```
-
-脚本会读取非空文件，并输出到：
-
-```text
-data/processed/documents.jsonl
-```
-
-每一行是一条 JSON 记录，包含 `id`、`source_path`、`title`、`text` 和 `metadata.file_type`。
-
-输入目录不存在或输出文件无法写入时，命令会输出错误信息并以失败状态退出；非 UTF-8 文件会被跳过并提示；空目录会成功生成空的 JSONL 文件。
-
-运行测试：
-
-```bash
-.venv/Scripts/python.exe -m pytest
-```
-
-## 从零开始运行
-
-在一台新机器上，可以按下面步骤运行项目：
-
-```bash
-git clone <repo-url>
-cd ai_fullstack
-python -m venv .venv
-source .venv/Scripts/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-```
-
-其中 `<repo-url>` 需要替换为实际的远程仓库地址。
-
-## 今日完成内容
-
-- 创建项目目录结构。
-- 初始化 Git 仓库。
-- 创建 Python 虚拟环境 `.venv`。
-- 安装第一批依赖：FastAPI、Uvicorn、Pydantic。
-- 生成 `requirements.txt`。
-- 创建 `app/main.py`。
-- 实现 `/` 和 `/health` 两个接口。
-- 配置 `.gitignore`，忽略 `.venv/` 和 Python 缓存文件。
-
-## 参考资料
-
-- [FastAPI First Steps](https://fastapi.tiangolo.com/tutorial/first-steps/)
-- [Python venv 官方文档](https://docs.python.org/3/library/venv.html)
-
